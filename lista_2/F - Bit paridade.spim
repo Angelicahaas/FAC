@@ -1,0 +1,16 @@
+contaBits:
+    # Inicialize o contador de bits
+    move $v0, $zero
+
+    # Enquanto o número for diferente de 0:
+loop:
+   
+    beq $a0, $zero, end
+    andi $t1, $a0, 1 
+    srl $a0, $a0, 1
+    add $v0, $v0, $t1
+    j loop
+
+end:
+    # Retorne o valor do contador de bits
+    jr $ra

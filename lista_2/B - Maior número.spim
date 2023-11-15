@@ -1,0 +1,44 @@
+.data
+    n: .asciiz "\n"
+.text
+
+main:
+    # Lê o número de entradas
+    li $v0, 5
+    syscall
+    move $t0, $v0 # $t0 armazena o número de entradas
+
+    li $t5, -2147483648 # Inicializa o maior número como o menor inteiro possível
+
+input_loop:
+    # Lê a entrada
+    li $v0, 5
+    syscall
+    move $t1, $v0
+
+    # Compara a entrada com o maior número atual
+    bgt $t1, $t5, update_max
+
+    b not_greater
+
+update_max:
+    move $t5, $t1 # Atualiza o maior número
+
+not_greater:
+    addi $t0, $t0, -1 # Decrementa o contador de entradas
+
+    bnez $t0, input_loop # Se ainda há entradas, volte para a leitura
+
+    # Imprime o maior número encontrado
+    li $v0, 1
+    move $a0, $t5
+    syscall
+
+    # Imprime a quebra de linha
+    li $v0, 4
+    la $a0, n 
+    syscall
+    
+    # Saída do programa
+    li $v0, 10
+    syscall

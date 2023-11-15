@@ -1,0 +1,65 @@
+.data
+    n: .asciiz "\n"
+    v: .word 1, 1, 2, 2, 5, 5, 5, 5, 7, 8
+.text
+
+main:
+    la $a0, v           # endereço base do vetor v
+    li $a1, 10          # quantidade de elementos em v
+
+    jal elemDistintos   # chama o procedimento elemDistintos
+
+    move $a0, $v0       # Agora, $v0 contém o resultado (quantidade de elementos distintos)
+
+    li $v0, 1
+    syscall
+    
+    li $v0, 10
+    syscall
+
+elemDistintos:
+    # $a0 = endereço base do vetor v
+    # $a1 = quantidade de elementos em v
+
+    # Se o vetor estiver vazio, não há elementos distintos
+    beq $a1, $zero, fimElemDistintos
+
+    # Inicializa $t0 (contador de elementos distintos) com 1, pois o primeiro elemento sempre será distinto
+    li $t0, 1
+
+    # Inicializa $t1 (índice) com 1
+    li $t1, 1
+
+    loopElemDistintos:
+        # Verifica se chegou ao final do vetor
+        beq $t1, $a1, fimElemDistintos
+
+        # Carrega o elemento atual do vetor v[i]
+        lw $t2, 0($a0)
+
+        # Carrega o próximo elemento do vetor v[i+1]
+        lw $t3, 4($a0)
+
+        # Compara os elementos
+        bne $t2, $t3, contElemDistintos
+
+        # Se forem iguais, continua para o próximo elemento
+        j proximoElemDistintos
+
+        contElemDistintos:
+            # Incrementa o contador de elementos distintos ($t0)
+            addi $t0, $t0, 1
+
+        proximoElemDistintos:
+            # Atualiza o endereço para o próximo elemento
+            addi $a0, $a0, 4
+
+            # Incrementa o índice ($t1)
+            addi $t1, $t1, 1
+
+            # Continua o loop
+            j loopElemDistintos
+
+    fimElemDistintos:
+        move $v0, $t0  # Armazena o resultado na $v0
+        jr $ra         # Retorna

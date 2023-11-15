@@ -1,0 +1,49 @@
+.data
+    nl: .asciiz "\n"
+    values: .word 5, 12, 8, 20, 10
+    array_size: .word 5
+    max_value: .word 0
+
+.text
+main:
+    # Inicialização de registradores
+    la $s0, values         # Endereço inicial do vetor
+    lw $s1, array_size     # Tamanho do vetor
+    lw $s2, max_value      # Variável para armazenar o valor máximo
+
+    # Loop para percorrer o vetor e encontrar o valor máximo
+    li $t0, 0              # Inicializa índice do vetor
+
+    find_max_loop:
+        bge $t0, $s1, end_find_max  # Se atingiu o final do vetor, sair do loop
+
+        lw $t1, 0($s0)        # Carrega o valor do vetor na posição atual
+
+        bge $t1, $s2, not_max  # Se o valor não é maior que o máximo atual, vá para not_max
+
+        sw $t1, 0($s2)        # Atualiza o valor máximo
+        j not_max_end         # Pula para o final da verificação do máximo
+
+        not_max:
+            # (opcional) Código para tratar o caso em que o valor não é o máximo
+
+        not_max_end:
+            addi $t0, $t0, 1   # Incrementa o índice
+            addi $s0, $s0, 4   # Move para a próxima posição no vetor
+        j find_max_loop       # Volta para o início do loop
+
+    end_find_max:
+    
+    # Imprime o valor máximo
+    li $v0, 4
+    la $a0, max_value
+    syscall
+
+    # Imprime uma nova linha
+    li $v0, 4
+    la $a0, nl
+    syscall
+
+    # Encerra o programa
+    li $v0, 10
+    syscall

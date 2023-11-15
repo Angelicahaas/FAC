@@ -1,0 +1,46 @@
+.data
+    n: .asciiz "\n"
+    buffer: .space 5       # Buffer para armazenar a string de entrada
+
+.text
+main:
+
+    li $v0, 5               
+    syscall  
+
+    move $t0, $v0           
+
+    loop:
+        beq $t0, $zero, exit # Se N for zero, sair do loop
+        addi $t0, -1         # Decrementar N
+
+        
+        li $v0, 8            # Ler buffer
+        la $a0, buffer       
+        syscall              
+
+        
+        lb $t1, 0($a0)        # Carregar o primeiro caractere em $t1
+        lb $t2, 2($a0)        # Carregar o terceiro caractere em $t2
+
+        beq $t1, $t2, igual    # Se o primeiro e o terceiro caracteres forem iguais, pular para igual
+
+        li $a0, 2             # Configurar $a0 para 2 (caracteres não são iguais)
+        j imprimir              
+
+    igual:
+        li $a0, 1             # Caracteres são iguais
+
+    imprimir:
+        li $v0, 1        
+        syscall           
+
+        li $v0, 4             
+        la $a0, n           
+        syscall               
+
+        j loop                
+
+    exit:
+        li $v0, 10            
+        syscall               

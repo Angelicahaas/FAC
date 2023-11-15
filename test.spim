@@ -1,0 +1,25 @@
+.data
+    n: .asciiz "\n"
+    input_prompt: .asciiz ""
+.text
+
+main:
+    li $t5, 0          # Inicialize a variável para armazenar o maior número
+    li $t0, 5          # Defina o número de entradas desejadas (5 no seu exemplo)
+
+input_loop:
+    # Solicite uma entrada ao usuário
+    li $v0, 4
+    la $a0, input_prompt
+    syscall
+
+    # Leia o número digitado
+    li $v0, 5
+    syscall
+    move $t1, $v0
+
+    li $v0, 5
+    syscall 
+    move $t2, $v0
+
+    

@@ -1,0 +1,10 @@
+.data
+    n1: .word 13
+    n2: .word 14
+    result: .word 0
+
+.text
+
+main:
+
+    

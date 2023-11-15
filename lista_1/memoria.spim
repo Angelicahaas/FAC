@@ -1,0 +1,33 @@
+li $v0, 5        # Carregar código de syscall para leitura de inteiro (i)
+    la $a0, i        # Carregar o endereço da variável i
+    syscall
+
+    li $v0, 5        # Carregar código de syscall para leitura de inteiro (j)
+    la $a0, j        # Carregar o endereço da variável j
+    syscall
+
+    li $v0, 5        # Carregar código de syscall para leitura de inteiro (N)
+    la $a0, N        # Carregar o endereço da variável N
+    syscall
+
+    # Carregar o endereço base do vetor A no registrador $s0
+    la $s0, A
+
+    # Carregar o valor de A[j] em $t1
+    lw $t1, 0($s0)   # Supondo que o tamanho de uma palavra seja 4 bytes
+
+    # Calcular o endereço de A[i] (A + i * 4)
+    lw $t2, i        # Carregar o valor de i em $t2
+    sll $t2, $t2, 2  # Multiplicar i por 4 para obter o deslocamento em bytes
+    add $t2, $s0, $t2  # Adicionar o deslocamento ao endereço base de A para obter o endereço de A[i]
+
+    # Adicionar A[j] e N
+    add $t1, $t1, $t3
+
+    # Armazenar o resultado de A[i] de volta em A[i]
+    sw $t1, 0($t2)   # Supondo que o tamanho de uma palavra seja 4 bytes
+
+    # Encerrar o programa
+    li $v0, 10       # Carregar código de syscall para encerrar o programa
+    syscall
+
