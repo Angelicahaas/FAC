@@ -1,0 +1,52 @@
+multfac:
+
+    addi $t4, $zero, 32
+    
+    slt $t8, $a0, $zero      #se $a0 < 0 $t8 = 1
+	slt $t9, $a1, $zero      #se $a1 < 0 $t9 = 1
+
+    beq $t8, $zero, verifica    # se $t8 == 0
+    nor $a0, $a0, $zero         #nega
+    addi $a0, $a0, 1
+
+verifica:
+    beq $t9, $zero, dec
+    nor $a1, $a1, $zero
+    addi $a1, $a1, 1
+
+
+    dec:
+        move $t0, $zero
+        move $t1, $a1
+
+
+p1:
+    andi $t2, $t1, 1
+    beq $t2, $zero, p2
+    add $t0, $t0, $a0
+
+
+p2:
+    andi $t3, $t0, 1 
+    srl $t0, $t0, 1
+    srl $t1, $t1, 1
+
+    sll $t3, $t3, 31        #31 shifts à esquerda (hi) (filtro para passar o último bit da esquerda p/ direita)
+    add $t1, $t1, $t3       #passar o bit mais sig da hi => lo
+
+    addi $t4, $t4, -1
+    beq $t4, $zero, sinal
+    j p1
+
+#retorno:
+sinal:
+    beq $t8, $t9, fim
+    nor $t1, $t1, $zero
+    nor $t0, $t0, $zero    
+    addi $t1, $t1, 1
+
+fim:
+    mthi $t0
+    mtlo $t1
+    
+    jr $ra

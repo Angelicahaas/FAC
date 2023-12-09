@@ -1,58 +1,64 @@
 .data
-    n: .asciiz "\n"
-    o: .asciiz "overflow"
+
+    overflow: .asciiz "overflow"
+    pulaLinha: .asciiz "\n"
 
 .text
 
-main: 
-    li $v0, 5      
-    syscall  
-    move $t1, $v0   
+main:
 
-    li $v0, 5      
+    li $v0, 5
     syscall
-    move $t2, $v0
+    move $t4, $v0
 
-    li $v0, 5      # Entrada para indicar se é adição com ou sem sinal (0 para sem sinal, 1 para com sinal)
+    li $v0, 5
     syscall
-    move $t3, $v0 
+    move $t0, $v0
 
-    # Verifica se houve overflow
-    beqz $t3, nosignal  # Se $t3 for zero, vai para a adição sem sinal
-    bgt $t3, $zero, signal # Se $t3 for diferente de zero, vai para a adição com sinal
-
-nosignal:
-    # Verifica se houve overflow na adição sem sinal
-    bgtu $t2, $t1, ov  # Se $t2 >= $t1, há overflow
-    
-    # Adição sem sinal
-    addu $t4, $t1, $t2
-    
-    # Imprime o resultado
-    li $v0, 1
-    move $a0, $t4
+    li $v0, 5
     syscall
+    move $t1, $v0
 
-    j end
+    addu $t2, $t0, $t1
 
-signal:
-    # Verifica se houve overflow na adição com sinal
-    bgt $t2, $t1, ov  # Se $t2 >= $t1, há overflow
-    
-    # Adição com sinal
-    add $t4, $t1, $t2
+    bne $t4, $zero, comSinal
 
-    # Imprime o resultado
-    li $v0, 1
-    move $a0, $t4
-    syscall
+    nor $t3, $t0, $zero
+    sltu $t3, $t3, $t1
+    bne $t3, $zero, comOverflow
+    j noOverflow
 
-    j end
+comSinal:
 
-ov:
-    # Imprime "overflow"
+    xor $t3, $t0, $t1
+    slt $t3, $t3, $zero
+    bne $t3, $zero, noOverflow
+
+    xor $t3, $t2, $t0
+    slt $t3, $t3, $zero
+    bne $t3, $zero, comOverflow
+    j noOverflow
+
+comOverflow:
+
     li $v0, 4
-    la $a0, o
+    la $a0, overflow
+    syscall
+
+    li $v0, 4
+    la $a0, pulaLinha
+    syscall
+
+    j end
+
+noOverflow:
+
+    move $a0, $t2
+    li $v0, 1
+    syscall
+
+    li $v0, 4
+    la $a0, pulaLinha
     syscall
 
 end:
